@@ -1,0 +1,19 @@
+# Robots.txt untuk Thunders Generative
+# Mengatur akses web crawler dan mesin pencari
+
+User-agent: *
+Allow: /
+Allow: /logo.png
+Allow: /favicon.ico
+
+# Blokir direktori privat, komponen internal, dan file sensitif
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /_next/
+Disallow: /node_modules/
+Disallow:/*.json$
+Disallow:/*.xml$
+
+# Informasi Sitemap
+Sitemap: https://thundersgenerative.com/sitemap.xml
