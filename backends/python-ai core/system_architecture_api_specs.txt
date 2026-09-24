@@ -1,0 +1,105 @@
+# Thunders Generative — System Architecture & Workflow Specifications
+
+## 1. High-Level System Architecture
+
+The **Thunders Generative** platform utilizes an asynchronous microservice architecture centered around the Python `ai-core` service. It acts as an orchestration gateway between client applications (Web/Mobile/Desktop) and external state-of-the-art Generative AI foundational models and specialized APIs.
+
+```
++-----------------------------------------------------------------------------------+
+|                                 CLIENT LAYER                                      |
+|                 (Web Frontend / Mobile App / Canvas UI / CLI)                     |
++-----------------------------------------------------------------------------------+
+                                          |
+                                    REST / HTTPS
+                                 (Header: X-API-Key)
+                                          v
++-----------------------------------------------------------------------------------+
+|                        THUNDERS AI-CORE (FastAPI Service)                         |
+|  +-------------------+  +--------------------+  +------------------------------+  |
+|  | Auth & Security   |  | Request Validation |  | Async Lifespan & Logging    |  |
+|  | (API Key Handler) |  | (Pydantic Schemas) |  | (Uvicorn / Middleware)       |  |
+|  +-------------------+  +--------------------+  +------------------------------+  |
+|                                         |                                         |
+|  +-----------------------------------------------------------------------------+  |
+|  |                           MODULAR ENGINES ROUTER                            |  |
+|  |  +----------------+  +-----------------+  +-----------------+  +---------+  |  |
+|  |  | Voice Engine   |  | Image Engine    |  | Video Engine    |  | Notebook|  |  |
+|  |  | (ElevenLabs)   |  | (Google Imagen) |  | (Replicate)     |  | Engine  |  |  |
+|  |  +----------------+  +-----------------+  +-----------------+  +---------+  |  |
+|  |  +-----------------------------------------------------------------------+  |  |
+|  |  | Canva & Vector Layout Engine (Canva Connect / Dynamic SVG Engine)     |  |  |
+|  |  +-----------------------------------------------------------------------+  |  |
+|  +-----------------------------------------------------------------------------+  |
++-----------------------------------------------------------------------------------+
+                                          |
+                        EXTERNAL PROVIDERS / CLOUD SDKs
+                                          |
+       +-------------------+--------------+--------------+------------------+
+       |                   |                             |                  |
+       v                   v                             v                  v
++--------------+   +---------------+             +---------------+   +--------------+
+| Google GenAI |   |  ElevenLabs   |             |   Replicate   |   | Canva API /  |
+|  (Gemini &   |   | (TTS / Voice) |             | (Video Models |   | Native SVG   |
+|   Imagen 3)  |   |               |             | Luma / Ray)   |   | Rendering    |
++--------------+   +---------------+             +---------------+   +--------------+
+```
+
+---
+
+## 2. End-to-End Image Generation Workflow
+
+Below is the step-by-step sequence diagram illustrating how an image generation request flows from the client to the **Google Imagen 3 API** through the `ai-core` pipeline and returns base64-encoded image payloads.
+
+```
+[ Client / Frontend ]        [ FastAPI Router ]         [ AI Core Handler ]      [ Google GenAI SDK ]
+         |                           |                          |                         |
+         | --- 1. POST /image ------>|                          |                         |
+         |     (Prompt, AspectRatio) |                          |                         |
+         |                           | --- 2. Verify API Key -->|                         |
+         |                           |     & Validate Payload   |                         |
+         |                           |                          |                         |
+         |                           |                          | --- 3. Invoke Imagen -->|
+         |                           |                          |     generate_images()   |
+         |                           |                          |                         |
+         |                           |                          |<--- 4. Binary Image ----|
+         |                           |                          |      Bytes Response     |
+         |                           |                          |                         |
+         |                           |<-- 5. Return Base64 -----|                         |
+         |                           |     JSON Payload         |                         |
+         |<-- 6. Render Image -------|                          |                         |
+         |     in Canvas UI          |                          |                         |
+```
+
+### Detailed Execution Steps:
+1. **Client Dispatch**: The user submits a prompt, target aspect ratio (e.g., `16:9`, `1:1`), and image quantity to `/api/v1/image/generate`.
+2. **Authentication & Validation**: FastAPI verifies the `X-API-Key` header via dependency injection and parses the request using `ImageGenerationRequest` Pydantic models.
+3. **SDK Invocation**: The `ai-core` engine delegates the synthesis task to the `google-genai` client using the `imagen-3.0-generate-002` foundational model.
+4. **Binary Processing**: Google GenAI returns raw JPEG bytes. The engine converts these bytes into `base64` encoded strings to avoid direct storage dependency during stateless execution.
+5. **Response Formatting**: The engine returns a structured JSON payload containing `status` and `images_base64`.
+6. **Client Rendering**: The front-end renders the base64 string directly inside canvas components or exports it to storage.
+
+---
+
+## 3. Comprehensive List of Integrated APIs
+
+| API / Provider | Engine Domain | Primary Purpose & Features | Auth Method |
+| :--- | :--- | :--- | :--- |
+| **Google GenAI API (Gemini 2.5 Flash)** | `Text & Chat Engine` / `Notebook Engine` | High-speed multi-turn conversation, complex reasoning, structured JSON extraction, and executable `.ipynb` Jupyter notebook code generation. | `GEMINI_API_KEY` |
+| **Google GenAI API (Imagen 3)** | `Image Engine` | High-fidelity text-to-image synthesis, precise prompt adherence, custom aspect ratio formatting (`16:9`, `9:16`, `1:1`). | `GEMINI_API_KEY` |
+| **ElevenLabs API** | `Voice Engine` | Natural text-to-speech (TTS), ultra-low latency audio streaming, multilingual voice synthesis, voice stability controls. | `ELEVENLABS_API_KEY` |
+| **Replicate API (Luma Ray / Video Models)** | `Video Engine` | Asynchronous text-to-video and image-to-video job dispatching, cloud rendering execution. | `REPLICATE_API_TOKEN` |
+| **Canva Connect API** | `Canva & Design Engine` | Automated design creation, dynamic brand presentation layout generation, visual template export. | `CANVA_API_KEY` |
+| **Native Fallback Vector Engine** | `Visual Design Engine` | Programmatic SVG vector generation with brand color mapping when direct external APIs are offline or unconfigured. | Internal |
+
+---
+
+## 4. API Endpoints Overview
+
+| Endpoint | Method | Security | Description |
+| :--- | :--- | :--- | :--- |
+| `/health` | `GET` | Public | System liveness probe and third-party SDK status inspector. |
+| `/api/v1/voice/generate` | `POST` | `X-API-Key` | Converts text to base64 MP3 audio using ElevenLabs. |
+| `/api/v1/image/generate` | `POST` | `X-API-Key` | Synthesizes images using Google Imagen 3. |
+| `/api/v1/video/generate` | `POST` | `X-API-Key` | Dispatches video generation tasks to Replicate cloud workers. |
+| `/api/v1/notebook/build` | `POST` | `X-API-Key` | Builds executable Jupyter Notebook `.ipynb` JSON objects. |
+| `/api/v1/canva/build-design` | `POST` | `X-API-Key` | Creates Canva designs or generates dynamic SVG layouts. |
