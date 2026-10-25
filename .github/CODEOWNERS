@@ -1,0 +1,34 @@
+# ⚡ Thunders Generative AI — code ownership
+# Replace @thunders-ai/* teams and handles with your actual GitHub org/teams.
+
+# Default
+* @thunders-ai/platform-leads
+
+# Backend & platform
+/backend/ @thunders-ai/backend-team
+/sdk/ @thunders-ai/platform-leads
+/packages/ @thunders-ai/frontend-team
+
+# Research & models
+/ai/ @thunders-ai/research-team
+/models/ @thunders-ai/research-team
+/training/ @thunders-ai/research-team
+/inference/ @thunders-ai/research-team
+/datasets/ @thunders-ai/data-team
+/data_pipeline/ @thunders-ai/data-team
+/research/ @thunders-ai/research-team
+/evaluation/ @thunders-ai/research-team
+/benchmarks/ @thunders-ai/research-team
+/prompts/ @thunders-ai/research-team
+
+# Clients
+/apps/web/ @thunders-ai/frontend-team
+/apps/desktop/ @thunders-ai/frontend-team
+/apps/admin/ @thunders-ai/frontend-team
+/apps/mobile/ @thunders-ai/mobile-team
+
+# Platform & security
+/infrastructure/ @thunders-ai/devops-team
+/security/ @thunders-ai/security-team
+/observability/ @thunders-ai/devops-team
+/.github/ @thunders-ai/platform-leads
