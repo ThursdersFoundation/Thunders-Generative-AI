@@ -1,0 +1,17 @@
+# NOTE: GitHub reads discussion templates from .github/DISCUSSION_TEMPLATE/<category>.md.
+# These are kept as .yml to match the planned repo layout — rename to .md (or recreate
+# the same body in your discussion category settings) if GitHub does not pick them up.
+title: "[Idea] "
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What do you propose, and what problem does it solve?
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Expected value
+      description: Who benefits, and how?

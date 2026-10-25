@@ -1,0 +1,21 @@
+# See note in ideas.yml about .yml vs .md discussion templates.
+title: "[Research] "
+labels: [research]
+body:
+  - type: textarea
+    id: topic
+    attributes:
+      label: Topic
+      description: The research question or direction.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Papers, repos, prior discussions.
+  - type: textarea
+    id: discussion
+    attributes:
+      label: Open questions
+      description: What feedback do you want from the community?

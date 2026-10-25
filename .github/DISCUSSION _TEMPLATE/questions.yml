@@ -1,0 +1,21 @@
+# See note in ideas.yml about .yml vs .md discussion templates.
+title: "[Question] "
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Include what you already tried and relevant docs/links.
+    validations:
+      required: true
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - setup & installation
+        - backend / API usage
+        - SDK usage
+        - training & fine-tuning
+        - inference & deployment
+        - contribution process
