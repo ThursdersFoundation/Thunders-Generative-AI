@@ -1,0 +1,51 @@
+# ⚡ Model evaluation — run evaluation suites on demand or on a weekly schedule.
+name: Model evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      model_id:
+        description: Model to evaluate (id from models/registry.yaml)
+        required: true
+        default: thunders-t1-chat
+      suite:
+        description: Evaluation suite to run
+        required: true
+        default: text
+        type: choice
+        options: [text, image, audio, video, code, multimodal, agents, safety]
+  schedule:
+    - cron: "0 6 * * 1" # weekly regression evaluation
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Run evaluation suite
+        run: |
+          python training/evaluate.py \
+            --model "${{ inputs.model_id || 'thunders-t1-chat' }}" \
+            --suite "${{ inputs.suite || 'text' }}" \
+            --output models/evaluation_reports
+
+      - name: Upload evaluation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-report-${{ inputs.model_id || 'scheduled' }}
+          path: models/evaluation_reports/
+          if-no-files-found: warn

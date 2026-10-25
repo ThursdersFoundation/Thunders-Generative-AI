@@ -1,0 +1,50 @@
+# ⚡ Frontend lint, typecheck, build & tests (pnpm workspace).
+name: Frontend tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter @thunders/web lint
+
+      - name: Build
+        run: pnpm --filter @thunders/web build
+
+      - name: Test
+        run: pnpm --filter @thunders/web test --if-present
+
+  sdk-javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Build SDK
+        run: pnpm --filter @thunders/genai build --if-present
+      - name: Test SDK
+        run: pnpm --filter @thunders/genai test --if-present

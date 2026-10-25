@@ -1,0 +1,37 @@
+# ⚡ Model layer smoke tests — CPU only, heavy tests marked `slow`/`gpu` are skipped.
+name: Model tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  model-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r backend/requirements.txt
+          pip install pytest pytest-asyncio
+
+      - name: Run model smoke tests
+        run: pytest tests/model_tests -m "not slow and not gpu" -q
+
+      - name: Validate model registry
+        run: python -c "
+          import yaml, pathlib
+          reg = yaml.safe_load(pathlib.Path('models/registry.yaml').read_text())
+          assert reg.get('models'), 'models/registry.yaml must define a non-empty models list'
+          ids = {m['id'] for m in reg['models']}
+          assert len(ids) == len(reg['models']), 'duplicate model ids in registry'
+          print(f'OK — {len(ids)} models registered')
+          "

@@ -1,0 +1,44 @@
+# ⚡ Dependency vulnerability audits for Python and Node packages.
+name: Dependency check
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # weekly, Mondays 04:00 UTC
+  pull_request:
+    paths:
+      - "backend/requirements.txt"
+      - "**/package.json"
+      - "**/pyproject.toml"
+  workflow_dispatch:
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        requirements: [backend/requirements.txt]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install audit tool
+        run: pip install pip-audit
+      - name: Audit Python dependencies
+        run: |
+          pip install -r ${{ matrix.requirements }}
+          pip-audit --strict
+
+  npm-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Audit npm workspace
+        run: |
+          npm install -g pnpm@9
+          pnpm install --no-frozen-lockfile
+          pnpm -r audit --audit-level high
+        continue-on-error: true # pnpm audit reports; tighten once baseline established

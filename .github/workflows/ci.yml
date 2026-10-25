@@ -1,0 +1,22 @@
+# ⚡ Continuous Integration — orchestrates reusable test workflows.
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-tests:
+    uses: ./.github/workflows/python-tests.yml
+
+  frontend-tests:
+    uses: ./.github/workflows/frontend-tests.yml
+
+  model-tests:
+    uses: ./.github/workflows/model-tests.yml
