@@ -1,0 +1,50 @@
+name: 🧠 Model request
+description: Request integration or registration of a new model.
+labels: [model-request]
+body:
+  - type: dropdown
+    id: modality
+    attributes:
+      label: Modality
+      options:
+        - text / LLM
+        - image
+        - video
+        - audio
+        - code
+        - multimodal
+        - embeddings
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: What should this model power in the platform?
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Model source / weights
+      placeholder: "Hugging Face repo, paper, or 'new model to be trained'"
+  - type: dropdown
+    id: license
+    attributes:
+      label: License of the weights
+      options:
+        - Apache-2.0
+        - MIT
+        - Llama-style community license
+        - Research-only / non-commercial
+        - Unknown
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Hardware & serving requirements
+      placeholder: "VRAM, quantization options, expected throughput…"
+  - type: textarea
+    id: evaluation
+    attributes:
+      label: Proposed evaluation plan
+      description: Which benchmarks / suites should gate registration? See evaluation/.

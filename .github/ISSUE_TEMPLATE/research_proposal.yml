@@ -1,0 +1,48 @@
+name: 🔬 Research proposal
+description: Propose a research direction, experiment or TEP (Thunders Enhancement Proposal).
+labels: [research]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One-paragraph overview of the proposal.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation & related work
+      description: Why now? Cite papers, prior art and internal context.
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Experiment plan
+      description: Hypothesis, method, datasets, metrics and success criteria.
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Required resources
+      description: Compute (GPU hours), datasets, reviewer time.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Research area
+      options:
+        - foundation-models
+        - llm
+        - text-generation
+        - image-generation
+        - video-generation
+        - audio-generation
+        - code-generation
+        - multimodal
+        - agents
+        - rag
+        - safety
+    validations:
+      required: true

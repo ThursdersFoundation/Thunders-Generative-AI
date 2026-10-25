@@ -1,0 +1,36 @@
+name: 🔒 Security report
+description: Template for tracking a coordinated security report (public follow-up). Report privately first!
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Do not disclose exploitable details publicly.**
+        File via [private security advisory](https://github.com/thunders-ai/Thunders-Generative-AI/security/advisories/new)
+        or email security@thunders.ai first. Use this template for the coordinated follow-up.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity (CVSS)
+      options: [critical, high, medium, low]
+    validations:
+      required: true
+  - type: textarea
+    id: component
+    attributes:
+      label: Affected component(s)
+      description: Paths or endpoints affected.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What could an attacker achieve?
+    validations:
+      required: true
+  - type: textarea
+    id: remediation
+    attributes:
+      label: Remediation plan
+      description: Fix, mitigation, and rollout strategy.

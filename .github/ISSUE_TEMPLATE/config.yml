@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & Discussions
+    url: https://github.com/thunders-ai/Thunders-Generative-AI/discussions
+    about: Ask questions, share ideas, and discuss research in Discussions.
+  - name: 🔒 Security vulnerability
+    url: https://github.com/thunders-ai/Thunders-Generative-AI/security/advisories/new
+    about: Please report vulnerabilities privately (see SECURITY.md) — not as public issues.
