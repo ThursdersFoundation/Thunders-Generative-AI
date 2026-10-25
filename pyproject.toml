@@ -1,0 +1,41 @@
+# ⚡ Thunders Generative AI — root Python project & tool configuration
+# Individual packages live in backend/pyproject.toml and sdk/python/pyproject.toml.
+
+[project]
+name = "thunders-generative-ai"
+version = "0.1.0"
+description = "Thunders Generative AI platform monorepo"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = [".venv", "node_modules", "datasets", "models/checkpoints"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+exclude = ["datasets", "models/checkpoints"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "backend"]
+asyncio_mode = "auto"
+addopts = "-ra"
+markers = [
+    "slow: slow tests (skipped by default, run with -m slow)",
+    "gpu: tests requiring a GPU",
+]
+
+[tool.coverage.run]
+source = ["backend", "training", "inference", "sdk/python/thunders_genai"]
+omit = ["*/tests/*", "*/migrations/*"]

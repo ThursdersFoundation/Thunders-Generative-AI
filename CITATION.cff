@@ -1,0 +1,24 @@
+# Citation metadata for Thunders Generative AI (https://citation-file-format.github.io/)
+cff-version: 1.2.0
+title: Thunders Generative AI
+message: >-
+  If you use Thunders Generative AI in your research, please cite it using
+  these metadata.
+type: software
+authors:
+  - name: Thunders AI Team
+    website: "https://thunders.ai"
+version: 0.1.0
+date-released: "2026-10-25"
+license: MIT
+repository-code: "https://github.com/thunders-ai/Thunders-Generative-AI"
+abstract: >-
+  Open platform for generative AI — text, image, video, audio and code
+  generation with autonomous agents, RAG, model training and inference.
+keywords:
+  - generative-ai
+  - llm
+  - diffusion
+  - agents
+  - rag
+  - machine-learning

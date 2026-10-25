@@ -1,0 +1,6 @@
+# ⚡ Thunders Generative AI — pnpm workspace definition
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "sdk/javascript"
+  - "sdk/typescript"
